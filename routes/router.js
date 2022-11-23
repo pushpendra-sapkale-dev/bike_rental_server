@@ -79,12 +79,12 @@ router.post('/login', (req, res) => {
                     const user = results[0];
                     console.log(user);
                     if (verify) {
-                        jwt.sign(user, process.env.JWTKEY, { expiresIn: '2h' }, (err, token) => {
+                        jwt.sign(user, process.env.JWT_KEY, { expiresIn: '2h' }, (err, token) => {
                             if (err) {
                                 res.status(200).json({ status: 'Error in generating JWT Token' });
                             }
                             else {
-                                res.status(200).json({ status: 'succefully loged in', auth: token });
+                                res.status(200).json({ status: 'successfully logged in', auth: token });
                             }
                         });
                     }
