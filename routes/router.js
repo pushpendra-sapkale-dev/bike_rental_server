@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
                                 res.status(200).json({ status: 'Error in inserting new user' });
                             }
                             else {
-                                jwt.sign(userDetails, process.env.JWTKEY, { expiresIn: '2h' }, (err, token) => {
+                                jwt.sign(userDetails, process.env.JWT_KEY, { expiresIn: '2h' }, (err, token) => {
                                     if (err) {
                                         res.status(200).json({ status: 'Error in generating JWT Token' });
                                     }
