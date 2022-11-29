@@ -5,6 +5,31 @@ const express = require('express'),
     router = express.Router();
 
 
+router.post('/sendfeedback', async (req, res) => {
+    const feedbackDetails = req.body;
+    const q = 'INSERT INTO feedback(name, email, feedback) VALUES (?)';
+    const insertFeedback = [
+        feedbackDetails.name,
+        feedbackDetails.email,
+        feedbackDetails.feedback
+    ]
+    console.log(feedbackDetails);
+    connection.query(
+        q, [insertFeedback],
+        function (err, results, fields) {
+            console.log(err);
+            console.log(results);
+            console.log(fields);
+            if (err) {
+                res.status(200).json({ status: 'Error in sending feedback' });
+            }
+            else {
+                res.status(200).json({ status: 'Feedback successfully submitted'});
+            }
+        }
+    );
+});
+
 
 router.post('/register', async (req, res) => {
     const userDetails = req.body;
@@ -13,7 +38,7 @@ router.post('/register', async (req, res) => {
     userDetails.password = hashedPassword;
     delete userDetails['confirmpassword'];
 
-    const insertQ = 'INSERT INTO sign_up(name, lastname, mobileno, email, gender, password, date) VALUES (?)';
+    const insertQ = 'INSERT INTO user_details(name, lastname, mobileno, email, gender, password, date) VALUES (?)';
     const insertV =
         [
             userDetails.name,
@@ -26,7 +51,7 @@ router.post('/register', async (req, res) => {
         ]
 
     connection.query(
-        `SELECT * FROM sign_up WHERE email = "${userDetails.email}"`,
+        `SELECT * FROM user_details WHERE email = "${userDetails.email}"`,
         function (err, results, fields) {
             if (!err) {
                 if (results.length == 0) {
@@ -64,7 +89,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', (req, res) => {
     const userDetails = req.body;
     connection.query(
-        `SELECT * FROM sign_up WHERE email = "${userDetails.email}"`,
+        `SELECT * FROM user_details WHERE email = "${userDetails.email}"`,
         function (err, results, fields) {
             if (err) {
                 console.log(err);
