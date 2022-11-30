@@ -4,8 +4,32 @@ const express = require('express'),
     connection = require('../db/connection'),
     router = express.Router();
 
+router.post('/book-bike', (req, res) => {
+    const bookObj = req.body;
+    const q = `INSERT INTO bike_booking(user_id, bike_name, start_date, end_date, licence, national_id) VALUES (?)`;
+    const insertBookingObj = [
+        bookObj.user_id,
+        bookObj.bike_name,
+        bookObj.start_date,
+        bookObj.end_date,
+        bookObj.licence,
+        bookObj.national_id
+    ]
+    console.log(insertBookingObj);
+    connection.query(q, [insertBookingObj], function (err, results, fields) {
+        console.log(err);
+        console.log(results);
+        console.log(fields);
+        if (err) {
+            res.status(200).json({ status: 'Error in bike booking' });
+        }
+        else {
+            res.status(200).json({ status: 'Bike booked successfully' });
+        }
+    })
+});
 
-router.post('/sendfeedback', async (req, res) => {
+router.post('/send-feedback', async (req, res) => {
     const feedbackDetails = req.body;
     const q = 'INSERT INTO feedback(name, email, feedback) VALUES (?)';
     const insertFeedback = [
@@ -24,7 +48,7 @@ router.post('/sendfeedback', async (req, res) => {
                 res.status(200).json({ status: 'Error in sending feedback' });
             }
             else {
-                res.status(200).json({ status: 'Feedback successfully submitted'});
+                res.status(200).json({ status: 'Feedback successfully submitted' });
             }
         }
     );
@@ -70,7 +94,7 @@ router.post('/register', async (req, res) => {
                                         res.status(200).json({ status: 'Error in generating JWT Token' });
                                     }
                                     else {
-                                        res.status(200).json({ status: 'User created successfully', auth: token });
+                                        res.status(200).json({ status: 'User created successfully', auth: token, user_id: results.insertId });
                                     }
                                 });
                             }
@@ -109,7 +133,7 @@ router.post('/login', (req, res) => {
                                 res.status(200).json({ status: 'Error in generating JWT Token' });
                             }
                             else {
-                                res.status(200).json({ status: 'successfully logged in', auth: token });
+                                res.status(200).json({ status: 'successfully logged in', auth: token, user_id: user.id });
                             }
                         });
                     }
@@ -120,5 +144,20 @@ router.post('/login', (req, res) => {
             }
         })
 });
+
+
+router.get('/get-booking-details', (req, res) => {
+    const user_id = req.query.user_id;
+    const q = `SELECT * FROM bike_booking WHERE user_id = ${user_id}`;
+    connection.query(q, function (err, results, fields) {
+        if (err) {
+            console.log('Error in getting booking data', err);
+        }
+        else {
+            console.log(results);
+            res.status(200).json({ data: results });
+        }
+    })
+})
 
 module.exports = router;
