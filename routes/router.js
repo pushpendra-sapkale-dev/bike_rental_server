@@ -15,7 +15,6 @@ router.post('/book-bike', (req, res) => {
         bookObj.licence,
         bookObj.national_id
     ]
-    console.log(insertBookingObj);
     connection.query(q, [insertBookingObj], function (err, results, fields) {
         console.log(err);
         console.log(results);
@@ -37,7 +36,6 @@ router.post('/send-feedback', async (req, res) => {
         feedbackDetails.email,
         feedbackDetails.feedback
     ]
-    console.log(feedbackDetails);
     connection.query(
         q, [insertFeedback],
         function (err, results, fields) {
@@ -58,7 +56,6 @@ router.post('/send-feedback', async (req, res) => {
 router.post('/register', async (req, res) => {
     const userDetails = req.body;
     let hashedPassword = await bcrypt.hash(req.body.password, 8);
-    console.log(hashedPassword);
     userDetails.password = hashedPassword;
     delete userDetails['confirmpassword'];
 
@@ -124,9 +121,7 @@ router.post('/login', (req, res) => {
                 }
                 else {
                     const verify = bcrypt.compareSync(userDetails.password, results[0]["password"]);
-                    console.log(verify);
                     const user = results[0];
-                    console.log(user);
                     if (verify) {
                         jwt.sign(user, process.env.JWT_KEY, { expiresIn: '2h' }, (err, token) => {
                             if (err) {
@@ -157,7 +152,21 @@ router.get('/get-booking-details', (req, res) => {
             console.log(results);
             res.status(200).json({ data: results });
         }
-    })
-})
+    });
+});
+
+router.delete('/cancle-booking', (req, res) => {
+    console.log(req.body);
+    const booking_id = Number(req.body.id);
+    const q = `DELETE FROM bike_booking WHERE id = ${booking_id}`;
+    connection.query(q, function (err, results, fields) {
+        if (err) {
+            res.status(200).json({ status: 'Error' });
+        }
+        else {
+            res.status(200).json({ status: 'Successfully cancled booking' });
+        }
+    });
+});
 
 module.exports = router;
