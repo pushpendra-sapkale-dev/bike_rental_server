@@ -4,6 +4,10 @@ const express = require('express'),
     connection = require('../db/connection'),
     router = express.Router();
 
+router.get('/', (req, res) => {
+    res.send('<h1>Testing Is Working<h1/>')
+})
+
 router.post('/book-bike', (req, res) => {
     const bookObj = req.body;
     const q = `INSERT INTO bike_booking(user_id, bike_name, start_date, end_date, licence, national_id) VALUES (?)`;
@@ -16,9 +20,9 @@ router.post('/book-bike', (req, res) => {
         bookObj.national_id
     ]
     connection.query(q, [insertBookingObj], function (err, results, fields) {
-        console.log(err);
-        console.log(results);
-        console.log(fields);
+        // console.log(err);
+        // console.log(results);
+        // console.log(fields);
         if (err) {
             res.status(200).json({ status: 'Error in bike booking' });
         }
@@ -39,9 +43,9 @@ router.post('/send-feedback', async (req, res) => {
     connection.query(
         q, [insertFeedback],
         function (err, results, fields) {
-            console.log(err);
-            console.log(results);
-            console.log(fields);
+            // console.log(err);
+            // console.log(results);
+            // console.log(fields);
             if (err) {
                 res.status(200).json({ status: 'Error in sending feedback' });
             }
@@ -79,9 +83,9 @@ router.post('/register', async (req, res) => {
                     connection.query(
                         insertQ, [insertV],
                         function (err, results, fields) {
-                            console.log(err);
-                            console.log(results);
-                            console.log(fields);
+                            // console.log(err);
+                            // console.log(results);
+                            // console.log(fields);
                             if (err) {
                                 res.status(200).json({ status: 'Error in inserting new user' });
                             }
@@ -149,14 +153,14 @@ router.get('/get-booking-details', (req, res) => {
             console.log('Error in getting booking data', err);
         }
         else {
-            console.log(results);
+            // console.log(results);
             res.status(200).json({ data: results });
         }
     });
 });
 
 router.delete('/cancle-booking', (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const booking_id = Number(req.body.id);
     const q = `DELETE FROM bike_booking WHERE id = ${booking_id}`;
     connection.query(q, function (err, results, fields) {
